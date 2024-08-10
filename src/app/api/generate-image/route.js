@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { storage } from '@/lib/firebase'; // Adjust the import path as needed
+import { storage } from '@/lib/firebaseabc'; 
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { PrismaClient } from '@prisma/client';
 

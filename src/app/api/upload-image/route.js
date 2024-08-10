@@ -1,4 +1,4 @@
-import { storage } from '../../lib/firebase';
+import { storage } from '@/lib/firebaseabc';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { NextResponse } from 'next/server';
 
