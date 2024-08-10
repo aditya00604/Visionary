@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
-import { storage } from '../../../lib/firebase'; // Adjust the import path as needed
+import { storage } from '@/lib/firebase'; // Adjust the import path as needed
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-const API_URL = 'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0';
-const API_KEY = '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'; // Replace with your Hugging Face token
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+ // Replace with your Hugging Face token
 
 async function query(data) {
   const response = await fetch(API_URL, {
