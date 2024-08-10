@@ -2,16 +2,16 @@
 import Link from 'next/link';
 import { List, ListItemButton, ListItemText, Divider, Drawer, Typography, Box } from '@mui/material';
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation'; // Use useRouter to get the current route
+import { usePathname } from 'next/navigation'; // Use useRouter to get the current route
 
 const drawerWidth = 240;
 
 const Sidebar = ({ open, handleDrawerToggle }) => {
   const { data: session } = useSession();
-  const { pathname } = useRouter(); // Get the current route
-
+  const route = usePathname(); // Get the current route
+  console.log(route);
   // Function to determine if the link is active
-  const isActive = (path) => pathname === path;
+  const isActive = (path) => route === path;
 
   return (
     <Drawer
@@ -29,7 +29,7 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
       anchor="left"
       open
     >
-      <Box sx={{ p: 2, bgcolor: 'blue', color: 'white' }}>
+      <Box sx={{ p: 2, bgcolor: '#63526c', color: 'white' }}>
         <Typography variant="h6" noWrap>
           Visionary
         </Typography>
@@ -42,8 +42,8 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/"
               sx={{
-                bgcolor: isActive('/') ? 'blue' : 'transparent',
-                '&:hover': { bgcolor: 'blue' },
+                bgcolor: isActive('/') ? '#4e4f84' : 'transparent',
+                '&:hover': { bgcolor: '#cfcfcf' },
               }}
             >
               <ListItemText primary="Gallery" sx={{ color: isActive('/') ? 'white' : 'black' }} />
@@ -52,8 +52,8 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/blog"
               sx={{
-                bgcolor: isActive('/blog') ? 'blue' : 'transparent',
-                '&:hover': { bgcolor: 'blue' },
+                bgcolor: isActive('/blog') ? '#4e4f84' : 'transparent',
+                '&:hover': { bgcolor: '#cfcfcf' },
               }}
             >
               <ListItemText primary="BlogPosts" sx={{ color: isActive('/blog') ? 'white' : 'black' }} />
@@ -62,8 +62,8 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/login"
               sx={{
-                bgcolor: isActive('/login') ? 'blue' : 'transparent',
-                '&:hover': { bgcolor: 'blue' },
+                bgcolor: isActive('/login') ? '#4e4f84' : 'transparent',
+                '&:hover': { bgcolor: '#cfcfcf' },
               }}
             >
               <ListItemText primary="Login" sx={{ color: isActive('/login') ? 'white' : 'black' }} />
@@ -72,8 +72,8 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/signup"
               sx={{
-                bgcolor: isActive('/signup') ? 'blue' : 'transparent',
-                '&:hover': { bgcolor: 'blue' },
+                bgcolor: isActive('/signup') ? '#4e4f84' : 'transparent',
+                '&:hover': { bgcolor: '#cfcfcf' },
               }}
             >
               <ListItemText primary="Sign Up" sx={{ color: isActive('/signup') ? 'white' : 'black' }} />
@@ -85,8 +85,8 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/dashboard"
               sx={{
-                bgcolor: isActive('/dashboard') ? 'blue' : 'transparent',
-                '&:hover': { bgcolor: 'blue' },
+                bgcolor: isActive('/dashboard') ? '#4e4f84' : 'transparent',
+                '&:hover': { bgcolor: '#cfcfcf' },
               }}
             >
               <ListItemText primary="Use AI" sx={{ color: isActive('/dashboard') ? 'white' : 'black' }} />
@@ -95,8 +95,8 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/"
               sx={{
-                bgcolor: isActive('/') ? 'blue' : 'transparent',
-                '&:hover': { bgcolor: 'blue' },
+                bgcolor: isActive('/') ? '#4e4f84' : 'transparent',
+                '&:hover': { bgcolor: '#cfcfcf' },
               }}
             >
               <ListItemText primary="Gallery" sx={{ color: isActive('/') ? 'white' : 'black' }} />
@@ -105,8 +105,8 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/blog"
               sx={{
-                bgcolor: isActive('/blog') ? 'blue' : 'transparent',
-                '&:hover': { bgcolor: 'blue' },
+                bgcolor: isActive('/blog') ? '#4e4f84' : 'transparent',
+                '&:hover': { bgcolor: '#cfcfcf' },
               }}
             >
               <ListItemText primary="BlogPosts" sx={{ color: isActive('/blog') ? 'white' : 'black' }} />
@@ -115,7 +115,7 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               onClick={() => signOut()}
               sx={{
                 bgcolor: 'transparent',
-                '&:hover': { bgcolor: 'red' },
+                '&:hover': { bgcolor: '#ff9f9f ' },
               }}
             >
               <ListItemText primary="Logout" sx={{ color: 'black' }} />
