@@ -1,12 +1,14 @@
+// components/BlogList.jsx
 "use client";
-import { useState, useEffect, useRef } from 'react';
-import { useSession } from 'next-auth/react';
-import { Button, Typography, TextField, Box, List, ListItem, Card, CardContent, CardActions, IconButton, Divider, useMediaQuery, useTheme, CircularProgress } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Button, Typography, Box, List, ListItem, Card, CardContent, CardActions, IconButton, Divider, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import { marked } from 'marked';
 import { styled } from '@mui/material/styles';
+import { useSession } from 'next-auth/react';
 
+// Styled components
 const CardStyled = styled(Card)(({ theme }) => ({
   width: '100%',
   maxWidth: '100%',
@@ -71,13 +73,6 @@ const MetaText = styled(Typography)(({ theme }) => ({
   marginBottom: theme.spacing(0.5),
 }));
 
-const ContentText = styled(Typography)(({ theme }) => ({
-  fontSize: '0.875rem',
-  color: theme.palette.text.primary,
-  lineHeight: 1.5,
-  marginBottom: theme.spacing(1),
-}));
-
 const LoadingContainer = styled('div')(({ theme }) => ({
   position: 'absolute',
   top: '50%',
@@ -91,17 +86,14 @@ const LoadingContainer = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
 }));
 
-export default function HomePage() {
+const BlogList = ({ title, page, setPage, totalPages }) => {
   const { data: session } = useSession();
-  const [title, setTitle] = useState('');
   const [blogPosts, setBlogPosts] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const postsPerPage = 10;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const searchInputRef = useRef(null);
+
+  const postsPerPage = 10;
 
   const fetchBlogPosts = async (searchTitle = '', pageNumber = 1) => {
     setLoading(true);
@@ -122,23 +114,12 @@ export default function HomePage() {
       console.error('Error fetching blog posts:', error);
     } finally {
       setLoading(false);
-      // Delay the focus to ensure it works correctly
-      setTimeout(() => {
-        if (searchInputRef.current) {
-          searchInputRef.current.focus();
-        }
-      }, 100);
     }
   };
 
   useEffect(() => {
     fetchBlogPosts(title, page);
   }, [title, page]);
-
-  const handleSearch = () => {
-    setPage(1);
-    fetchBlogPosts(title, 1);
-  };
 
   const handleNextPage = () => {
     if (page < totalPages) {
@@ -150,10 +131,6 @@ export default function HomePage() {
     if (page > 1) {
       setPage(page - 1);
     }
-  };
-
-  const renderHTML = (html) => {
-    return { __html: html };
   };
 
   const handleDelete = async (postId) => {
@@ -174,30 +151,7 @@ export default function HomePage() {
   }
 
   return (
-    <Box className="p-4" maxWidth="lg" margin="auto">
-      <Typography variant="h4" gutterBottom align="center" color="primary">
-        Search Blog Posts
-      </Typography>
-      <Box mb={2} display="flex" flexDirection={isMobile ? 'column' : 'row'} alignItems="center">
-        <TextField
-          label="Search by title"
-          variant="outlined"
-          fullWidth
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          margin="normal"
-          inputRef={searchInputRef}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSearch}
-          sx={{ marginLeft: isMobile ? 0 : 2, marginTop: isMobile ? 2 : 0 }}
-        >
-          Search
-        </Button>
-      </Box>
-
+    <Box>
       {blogPosts.length > 0 && (
         <>
           <List
@@ -233,7 +187,7 @@ export default function HomePage() {
                       Comments: {post.commentsCount}
                     </MetaText>
                     <ContentPreview>
-                      <div dangerouslySetInnerHTML={renderHTML(marked(post.content))} />
+                      <div dangerouslySetInnerHTML={{ __html: marked(post.content) }} />
                       <GradientOverlay />
                     </ContentPreview>
                   </CardContent>
@@ -270,4 +224,6 @@ export default function HomePage() {
       )}
     </Box>
   );
-}
+};
+
+export default BlogList;

@@ -1,9 +1,6 @@
 // src/app/api/blog/[id]/comments/add/route.js
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
+import prisma from '@/lib/prisma';
 export async function POST(request, { params }) {
   const { id } = params;
   const { content, userId } = await request.json();

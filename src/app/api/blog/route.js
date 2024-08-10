@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 export async function GET(request) {
   const { title = '', page = 1, pageSize = 10 } = new URL(request.url).searchParams;

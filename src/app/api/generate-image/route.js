@@ -1,12 +1,11 @@
+// app/api/generate-image/route.js
 import { NextResponse } from 'next/server';
 import { storage } from '@/lib/firebaseabc'; 
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/prisma';
 
-const prisma = new PrismaClient();
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
- // Replace with your Hugging Face token
 
 async function query(data) {
   const response = await fetch(API_URL, {
@@ -30,7 +29,6 @@ async function uploadToFirebase(imageBuffer) {
   const fileName = `images/${Date.now()}.png`;
   const storageRef = ref(storage, fileName);
 
-  // Convert the buffer to a Blob
   const blob = new Blob([imageBuffer], { type: 'image/png' });
   await uploadBytes(storageRef, blob);
 
@@ -40,7 +38,6 @@ async function uploadToFirebase(imageBuffer) {
 
 export async function POST(request) {
   try {
-    // Extract the user ID from the request headers
     const userId = request.headers.get('user-id');
 
     if (!userId) {
@@ -48,18 +45,16 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { text } = await request.json(); // No need to extract isPublic
+    const { text } = await request.json();
 
     const imageBuffer = await query({ inputs: text });
     const imageUrl = await uploadToFirebase(imageBuffer);
 
-    // Store image information in the database
     const image = await prisma.image.create({
       data: {
         url: imageUrl,
-        prompt: text, // Store the prompt used to generate the image
+        prompt: text,
         userId: userId,
-        // isPublic defaults to false
       },
     });
 

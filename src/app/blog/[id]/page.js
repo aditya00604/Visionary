@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from 'react';
-import { Button, Typography, TextField, Box, List, ListItem, IconButton } from '@mui/material';
+import { Button, Typography, TextField, Box, List, ListItem, IconButton, Grid, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { marked } from 'marked';
@@ -18,7 +18,7 @@ export default function BlogPage({ params }) {
   const [editPost, setEditPost] = useState(false);
   const [editedContent, setEditedContent] = useState('');
   const [editComments, setEditComments] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Set loading to true initially
   const [error, setError] = useState(null);
   const { data: session, status } = useSession(); // Use useSession hook
 
@@ -29,10 +29,14 @@ export default function BlogPage({ params }) {
     try {
       const blogPostResponse = await axios.get(`/api/blog/${id}`);
       const commentsResponse = await axios.get(`/api/blog/${id}/comments`);
-      
-      setBlogPost(blogPostResponse.data);
-      setComments(commentsResponse.data);
-      setEditedContent(blogPostResponse.data.content); // Initialize with current content
+
+      if (blogPostResponse.data) {
+        setBlogPost(blogPostResponse.data);
+        setComments(commentsResponse.data);
+        setEditedContent(blogPostResponse.data.content); // Initialize with current content
+      } else {
+        setBlogPost(null); // Set blogPost to null if no post is found
+      }
     } catch (error) {
       console.error('Error fetching blog post:', error);
       setError('Failed to load blog post and comments.');
@@ -138,11 +142,11 @@ export default function BlogPage({ params }) {
   };
 
   if (loading) {
-    return <Typography>Loading...</Typography>;
-  }
-
-  if (error) {
-    return <Typography color="error">{error}</Typography>;
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh" width='100vw'>
+        <CircularProgress color="primary" />
+      </Box>
+    );
   }
 
   if (!blogPost) {
@@ -151,120 +155,126 @@ export default function BlogPage({ params }) {
 
   return (
     <Box className="p-4">
-      <Typography variant="h4" gutterBottom>
-        {blogPost.title}
-      </Typography>
-      <Typography variant="body1" paragraph>
-        {editPost ? (
-          <TextField
-            variant="outlined"
-            fullWidth
-            multiline
-            rows={10}
-            value={editedContent}
-            onChange={(e) => setEditedContent(e.target.value)}
-          />
-        ) : (
-          <div dangerouslySetInnerHTML={renderHTML(marked(blogPost.content))} />
-        )}
-      </Typography>
-      
-      {session?.user?.id === blogPost.userId && (
-        <Box>
-          {editPost ? (
-            <>
-              <IconButton color="primary" onClick={handleSavePost}>
-                <SaveIcon />
-              </IconButton>
-              <IconButton color="secondary" onClick={handleCancelEditPost}>
-                <CancelIcon />
-              </IconButton>
-            </>
-          ) : (
-            <IconButton color="primary" onClick={handleEditPost}>
-              <EditIcon />
-            </IconButton>
-          )}
-        </Box>
-      )}
-
-      <Button variant="contained" color="primary" onClick={handleToggleComments}>
-        {commentsVisible ? 'Hide Comments' : 'Show Comments'}
-      </Button>
-      
-      <Button variant="outlined" color="secondary" onClick={handleRefreshComments} className="mt-2">
-        Refresh Comments
-      </Button>
-
-      {commentsVisible && (
-        <>
-          <List>
-            {comments.map((comment) => (
-              <ListItem key={comment.id}>
-                <Box className="border p-2 mb-2 w-full">
-                  {editComments[comment.id] !== undefined ? (
-                    <>
-                      <TextField
-                        variant="outlined"
-                        fullWidth
-                        multiline
-                        rows={4}
-                        value={editComments[comment.id]}
-                        onChange={(e) => handleEditComment(comment.id, e.target.value)}
-                      />
-                      <IconButton color="primary" onClick={() => handleSaveComment(comment.id)}>
-                        <SaveIcon />
-                      </IconButton>
-                      <IconButton color="secondary" onClick={() => handleCancelEditComment(comment.id)}>
-                        <CancelIcon />
-                      </IconButton>
-                    </>
-                  ) : (
-                    <>
-                      <Typography variant="body2" color="textSecondary">
-                        {comment.content}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {comment.userEmail} - {new Date(comment.createdAt).toLocaleDateString()}
-                      </Typography>
-                      {session?.user?.id === comment.userId && (
-                        <Box>
-                          <IconButton color="primary" onClick={() => handleEditComment(comment.id, comment.content)}>
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton color="secondary" onClick={() => handleDeleteComment(comment.id)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      )}
-                    </>
-                  )}
-                </Box>
-              </ListItem>
-            ))}
-          </List>
-          {status === 'authenticated' ? (
-            <Box className="mt-4">
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={8}>
+          <Typography variant="h4" gutterBottom>
+            {blogPost.title}
+          </Typography>
+          <Typography variant="body1" paragraph>
+            {editPost ? (
               <TextField
-                label="Add a comment"
                 variant="outlined"
                 fullWidth
                 multiline
-                rows={4}
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
+                rows={10}
+                value={editedContent}
+                onChange={(e) => setEditedContent(e.target.value)}
               />
-              <Button variant="contained" color="primary" onClick={handleAddComment} className="mt-2">
-                Add Comment
-              </Button>
+            ) : (
+              <div dangerouslySetInnerHTML={renderHTML(marked(blogPost.content))} />
+            )}
+          </Typography>
+          
+          {session?.user?.id === blogPost.userId && (
+            <Box display="flex" gap={1}>
+              {editPost ? (
+                <>
+                  <IconButton color="primary" onClick={handleSavePost}>
+                    <SaveIcon />
+                  </IconButton>
+                  <IconButton color="secondary" onClick={handleCancelEditPost}>
+                    <CancelIcon />
+                  </IconButton>
+                </>
+              ) : (
+                <IconButton color="primary" onClick={handleEditPost}>
+                  <EditIcon />
+                </IconButton>
+              )}
             </Box>
-          ) : (
-            <Typography color="textSecondary" className="mt-2">
-              You must be logged in to add a comment.
-            </Typography>
           )}
-        </>
-      )}
+
+          <Button variant="contained" color="primary" onClick={handleToggleComments} className="mt-2">
+            {commentsVisible ? 'Hide Comments' : 'Show Comments'}
+          </Button>
+          
+          <Button variant="outlined" color="secondary" onClick={handleRefreshComments} className="mt-2">
+            Refresh Comments
+          </Button>
+
+          {commentsVisible && (
+            <>
+              <List>
+                {comments.map((comment) => (
+                  <ListItem key={comment.id}>
+                    <Box className="border p-2 mb-2 w-full">
+                      {editComments[comment.id] !== undefined ? (
+                        <>
+                          <TextField
+                            variant="outlined"
+                            fullWidth
+                            multiline
+                            rows={4}
+                            value={editComments[comment.id]}
+                            onChange={(e) => handleEditComment(comment.id, e.target.value)}
+                          />
+                          <Box display="flex" gap={1} mt={1}>
+                            <IconButton color="primary" onClick={() => handleSaveComment(comment.id)}>
+                              <SaveIcon />
+                            </IconButton>
+                            <IconButton color="secondary" onClick={() => handleCancelEditComment(comment.id)}>
+                              <CancelIcon />
+                            </IconButton>
+                          </Box>
+                        </>
+                      ) : (
+                        <>
+                          <Typography variant="body2" color="textSecondary">
+                            {comment.content}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            {comment.userEmail} - {new Date(comment.createdAt).toLocaleDateString()}
+                          </Typography>
+                          {session?.user?.id === comment.userId && (
+                            <Box display="flex" gap={1} mt={1}>
+                              <IconButton color="primary" onClick={() => handleEditComment(comment.id, comment.content)}>
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton color="secondary" onClick={() => handleDeleteComment(comment.id)}>
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                          )}
+                        </>
+                      )}
+                    </Box>
+                  </ListItem>
+                ))}
+              </List>
+              {status === 'authenticated' ? (
+                <Box className="mt-4">
+                  <TextField
+                    label="Add a comment"
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                  />
+                  <Button variant="contained" color="primary" onClick={handleAddComment} className="mt-2">
+                    Add Comment
+                  </Button>
+                </Box>
+              ) : (
+                <Typography color="textSecondary" className="mt-2">
+                  Log in to add comments.
+                </Typography>
+              )}
+            </>
+          )}
+        </Grid>
+      </Grid>
     </Box>
   );
 }

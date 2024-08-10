@@ -1,8 +1,6 @@
 // src/app/api/blog/[id]/delete/route.js
 
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
 
 export async function DELETE(request, { params }) {
   const { id } = params;

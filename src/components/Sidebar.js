@@ -31,18 +31,18 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
     >
       <Box sx={{ p: 2, bgcolor: 'blue', color: 'white' }}>
         <Typography variant="h6" noWrap>
-        Visionary
+          Visionary
         </Typography>
       </Box>
       <Divider sx={{ bgcolor: 'gray' }} />
       <List>
         {!session ? (
           <>
-             <ListItemButton
+            <ListItemButton
               component={Link}
               href="/"
               sx={{
-                bgcolor: isActive('/') ? 'green' : 'transparent',
+                bgcolor: isActive('/') ? 'blue' : 'transparent',
                 '&:hover': { bgcolor: 'blue' },
               }}
             >
@@ -52,17 +52,17 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/blog"
               sx={{
-                bgcolor: isActive('/history') ? 'green' : 'transparent',
+                bgcolor: isActive('/blog') ? 'blue' : 'transparent',
                 '&:hover': { bgcolor: 'blue' },
               }}
             >
-              <ListItemText primary="BlogPosts" sx={{ color: isActive('/history') ? 'white' : 'black' }} />
+              <ListItemText primary="BlogPosts" sx={{ color: isActive('/blog') ? 'white' : 'black' }} />
             </ListItemButton>
             <ListItemButton
               component={Link}
               href="/login"
               sx={{
-                bgcolor: isActive('/login') ? 'green' : 'transparent',
+                bgcolor: isActive('/login') ? 'blue' : 'transparent',
                 '&:hover': { bgcolor: 'blue' },
               }}
             >
@@ -72,7 +72,7 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/signup"
               sx={{
-                bgcolor: isActive('/signup') ? 'green' : 'transparent',
+                bgcolor: isActive('/signup') ? 'blue' : 'transparent',
                 '&:hover': { bgcolor: 'blue' },
               }}
             >
@@ -85,7 +85,7 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/dashboard"
               sx={{
-                bgcolor: isActive('/dashboard') ? 'green' : 'transparent',
+                bgcolor: isActive('/dashboard') ? 'blue' : 'transparent',
                 '&:hover': { bgcolor: 'blue' },
               }}
             >
@@ -95,7 +95,7 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/"
               sx={{
-                bgcolor: isActive('/') ? 'green' : 'transparent',
+                bgcolor: isActive('/') ? 'blue' : 'transparent',
                 '&:hover': { bgcolor: 'blue' },
               }}
             >
@@ -105,11 +105,11 @@ const Sidebar = ({ open, handleDrawerToggle }) => {
               component={Link}
               href="/blog"
               sx={{
-                bgcolor: isActive('/history') ? 'green' : 'transparent',
+                bgcolor: isActive('/blog') ? 'blue' : 'transparent',
                 '&:hover': { bgcolor: 'blue' },
               }}
             >
-              <ListItemText primary="BlogPosts" sx={{ color: isActive('/history') ? 'white' : 'black' }} />
+              <ListItemText primary="BlogPosts" sx={{ color: isActive('/blog') ? 'white' : 'black' }} />
             </ListItemButton>
             <ListItemButton
               onClick={() => signOut()}
